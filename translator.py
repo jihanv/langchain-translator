@@ -2,7 +2,7 @@
 from transformers import MarianMTModel, MarianTokenizer
 import torch
 
-MODEL_ID = "Helsinki-NLP/opus-mt-en-jap"
+MODEL_ID = "staka/fugumt-en-ja"
 
 # These are module-level “singletons” (loaded once)
 _tokenizer = None
