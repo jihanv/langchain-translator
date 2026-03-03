@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from translator import translate
+from chain import translator_chain  # <-- use LangChain now
 
 app = FastAPI()
 
@@ -11,7 +11,8 @@ class TranslateRequest(BaseModel):
 def root():
     return {"message": "Hello from FastAPI"}
 
+
 @app.post("/translate")
 def translate_endpoint(req: TranslateRequest):
-    ja = translate(req.text)
+    ja = translator_chain.invoke(req.text)  # <-- LangChain call
     return {"japanese": ja}
