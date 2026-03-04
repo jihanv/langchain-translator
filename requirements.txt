@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+langchain
+langchain-core
+langchain-community
+langchain-huggingface
+transformers
+torch
+sentencepiece
+sacremoses
