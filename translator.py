@@ -1,9 +1,6 @@
-# translator.py
 # This file defines a small “translator module”.
-# A module is just a .py file you can import from other code.
 
 # --- 1) Import the tools we need ---
-
 # MarianMTModel = the translation “brain” (a neural network).
 # MarianTokenizer = the “text <-> numbers” converter the model needs.
 from transformers import MarianMTModel, MarianTokenizer
@@ -20,9 +17,6 @@ MODEL_ID = "staka/fugumt-en-ja"
 
 
 # --- 3) Global variables that we will fill in ONE time (singletons) ---
-
-# At the start, we haven’t loaded anything yet, so these are None.
-# Later, after loading, they will hold:
 #   _tokenizer: the tokenizer object
 #   _model: the model object
 #   _device: where we run the model (Apple GPU or CPU)
@@ -86,7 +80,13 @@ def translate(text: str) -> str:
     # We wrap [text] in a list to make a “batch” of 1 item.
     # return_tensors="pt" means “give me PyTorch tensors”.
     # padding=True makes all items in the batch the same length (useful for batching).
-    inputs = _tokenizer([text], return_tensors="pt", padding=True).to(_device)
+    inputs = _tokenizer(
+    [text],
+    return_tensors="pt",
+    padding=True,
+    truncation=True,      # <-- new: cut off input that’s too long
+    max_length=512        # <-- new: match model limit
+    ).to(_device)
 
     # We are NOT training the model, just using it.
     # torch.no_grad() tells PyTorch: “don’t track gradients”
