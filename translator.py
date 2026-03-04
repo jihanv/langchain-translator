@@ -61,7 +61,7 @@ def _load_once():
 
 # --- 5) The function you actually call: translate text ---
 
-def translate(text: str) -> str:
+def translate(text: str, num_beams: int = 1) -> str:
     """
     Translate English -> Japanese.
     We keep decoding simple (num_beams=1) to avoid “creative” rewriting.
@@ -97,7 +97,7 @@ def translate(text: str) -> str:
         # generate() produces output token IDs (numbers) that represent Japanese text.
         output_ids = _model.generate(
             **inputs,           # same as passing input_ids=..., attention_mask=...
-            num_beams=1,        # 1 beam = “greedy” (simple, less fancy)
+            num_beams=num_beams,      # 1 beam = “greedy” (simple, less fancy)
             do_sample=False,    # no randomness; same input gives same output
             max_new_tokens=120, # cap output length so it can’t go on forever
         )
