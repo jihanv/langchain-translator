@@ -4,3 +4,6 @@ __pycache__/
 *$py.class
 
 .env
+notes.txt
+local_llm_test.py
+llm_test.py

@@ -61,7 +61,7 @@ def _load_once():
 
 # --- 5) The function you actually call: translate text ---
 
-def translate(text: str, num_beams: int = 1) -> str:
+def translate(text: str, num_beams: int = 1, literal_hint: bool = False) -> str:
     """
     Translate English -> Japanese.
     We keep decoding simple (num_beams=1) to avoid “creative” rewriting.
@@ -70,7 +70,9 @@ def translate(text: str, num_beams: int = 1) -> str:
     # Basic safety check: make sure the input is a string.
     if not isinstance(text, str):
         raise TypeError("text must be a string")
-
+    
+    # if literal_hint:
+    #     text = "Translate literally without correcting mistakes.: " + text
     # Make sure the model and tokenizer are loaded.
     # First time: loads them.
     # Later times: returns immediately (fast).
