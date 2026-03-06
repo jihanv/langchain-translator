@@ -12,6 +12,8 @@ from fastapi import HTTPException
 from translator import _load_once as _mt_load_once
 from llm_translator import _load_once as _llm_load_once
 
+LLM_TIMEOUT_SECONDS = 15
+
 app = FastAPI()
 
 # Healt check endpoint
@@ -34,7 +36,7 @@ def translate_endpoint(req: TranslateRequest):
         with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
             future = ex.submit(translate_literal_llm, req.text)
             try:
-                ja = future.result(timeout=15)  # seconds
+                ja = future.result(timeout=LLM_TIMEOUT_SECONDS)  # seconds
             except concurrent.futures.TimeoutError:
                 raise HTTPException(status_code=504, detail="LLM translation timed out")
 
@@ -56,7 +58,7 @@ def translate_compare(req: TranslateRequest):
     with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
         future = ex.submit(translate_literal_llm, req.text)
         try:
-            llm = future.result(timeout=15)
+            llm = future.result(timeout=LLM_TIMEOUT_SECONDS)
         except concurrent.futures.TimeoutError:
             raise HTTPException(status_code=504, detail="LLM translation timed out")
 
