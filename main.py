@@ -12,6 +12,10 @@ from fastapi import HTTPException
 
 app = FastAPI()
 
+# Healt check endpoint
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 class TranslateRequest(BaseModel):
     text: str
     mode: Literal["mt", "llm"] = "mt"
