@@ -40,3 +40,22 @@ def translate_endpoint(req: TranslateRequest):
 
     ja = translate_mt(req.text, num_beams=req.num_beams)
     return {"japanese": ja, "mode": "mt", "num_beams": req.num_beams}
+
+
+@app.post("/translate_compare")
+def translate_compare(req: TranslateRequest):
+    mt = translate_mt(req.text, num_beams=req.num_beams)
+
+    # reuse the same timeout approach for LLM
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as ex:
+        future = ex.submit(translate_literal_llm, req.text)
+        try:
+            llm = future.result(timeout=15)
+        except concurrent.futures.TimeoutError:
+            raise HTTPException(status_code=504, detail="LLM translation timed out")
+
+    return {
+        "english": req.text,
+        "mt": {"japanese": mt, "num_beams": req.num_beams},
+        "llm": {"japanese": llm},
+    }
