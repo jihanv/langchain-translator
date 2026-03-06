@@ -9,6 +9,8 @@ from llm_translator import translate_literal_llm
 from typing import Literal
 import concurrent.futures
 from fastapi import HTTPException
+from translator import _load_once as _mt_load_once
+from llm_translator import _load_once as _llm_load_once
 
 app = FastAPI()
 
@@ -41,6 +43,10 @@ def translate_endpoint(req: TranslateRequest):
     ja = translate_mt(req.text, num_beams=req.num_beams)
     return {"japanese": ja, "mode": "mt", "num_beams": req.num_beams}
 
+@app.on_event("startup")
+def warmup_models():
+    _mt_load_once()
+    _llm_load_once()
 
 @app.post("/translate_compare")
 def translate_compare(req: TranslateRequest):
@@ -59,3 +65,4 @@ def translate_compare(req: TranslateRequest):
         "mt": {"japanese": mt, "num_beams": req.num_beams},
         "llm": {"japanese": llm},
     }
+    
